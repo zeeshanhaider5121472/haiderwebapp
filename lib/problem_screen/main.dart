@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
             seedColor: Colors.deepPurple),
         //   // useMaterial3: true,
       ),
-      home: ProblemScreenVU(
+      home: const ProblemScreenVU(
         index1: 0,
         index2: 0,
         area: 'Air Compressor',

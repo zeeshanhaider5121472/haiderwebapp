@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 class QuestionsModel {
   QuestionsModel({
     required this.questions,
@@ -15,7 +17,7 @@ class QuestionsModel {
   }
 
   Map<String, dynamic> toJson() => {
-        "Questions": questions.map((x) => x?.toJson()).toList(),
+        "Questions": questions.map((x) => x.toJson()).toList(),
       };
 
   @override
@@ -49,7 +51,7 @@ class Question {
   Map<String, dynamic> toJson() => {
         "id": id,
         "title": title,
-        "Problem": problem.map((x) => x?.toJson()).toList(),
+        "Problem": problem.map((x) => x.toJson()).toList(),
       };
 
   @override
@@ -83,7 +85,7 @@ class Problem {
   Map<String, dynamic> toJson() => {
         "id": id,
         "title": title,
-        "immediateAction": immediateAction.map((x) => x?.toJson()).toList(),
+        "immediateAction": immediateAction.map((x) => x.toJson()).toList(),
       };
 
   @override
@@ -117,7 +119,7 @@ class ImmediateAction {
   Map<String, dynamic> toJson() => {
         "id": id,
         "title": title,
-        "problemCause": problemCause.map((x) => x?.toJson()).toList(),
+        "problemCause": problemCause.map((x) => x.toJson()).toList(),
       };
 
   @override
@@ -151,7 +153,7 @@ class ProblemCause {
   Map<String, dynamic> toJson() => {
         "id": id,
         "title": title,
-        "solution": solution.map((x) => x?.toJson()).toList(),
+        "solution": solution.map((x) => x.toJson()).toList(),
       };
 
   @override

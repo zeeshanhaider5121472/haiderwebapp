@@ -1,6 +1,7 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:stacked/stacked.dart';
 
 import '../reusable_widgets/header_button.dart';
 import '../reusable_widgets/header_vu.dart';
@@ -8,27 +9,39 @@ import '../reusable_widgets/sidemenu/sidemenu_vu.dart';
 import '../routing/app_route_consts.dart';
 import 'problem_screen_vm.dart';
 
-class ProblemScreenVU extends StackedView<ProblemScreenVM> {
+class ProblemScreenVU extends StatefulWidget {
   final String area;
   final int index1;
   final int index2;
   final String problem;
-  ProblemScreenVU(
+  const ProblemScreenVU(
       {super.key,
       required this.area,
       required this.problem,
       required this.index1,
       required this.index2});
-  final scaffoldKey = GlobalKey<ScaffoldState>();
+  @override
+  State<ProblemScreenVU> createState() => _ProblemScreenVUState();
+}
+
+class _ProblemScreenVUState extends State<ProblemScreenVU> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  late final ProblemScreenVM _viewModel;
 
   @override
-  Widget builder(
-      BuildContext context, ProblemScreenVM viewModel, Widget? child) {
+  void initState() {
+    super.initState();
+    _viewModel = ProblemScreenVM();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        key: scaffoldKey,
-        endDrawer: GenericDrawerVU(scaffoldKey: scaffoldKey),
+        key: _scaffoldKey,
+        // drawer: CustomDrawer(),
+        endDrawer: GenericDrawerVU(scaffoldKey: _scaffoldKey),
         // backgroundColor: const Color.fromARGB(255, 238, 238, 238),
         body: Ink(
           // color: const Color.fromARGB(255, 238, 238, 238),
@@ -39,19 +52,19 @@ class ProblemScreenVU extends StackedView<ProblemScreenVM> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    GenericHeader(title: area),
+                    GenericHeader(title: widget.area),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 14),
                       child: Column(
                         children: [
                           // const SizedBox(height: 20),
                           GenericAnswers(
-                              viewModel: viewModel,
+                              viewModel: _viewModel,
                               screenSize: screenSize,
-                              area: area,
-                              problem: problem,
-                              index1: index1,
-                              index2: index2),
+                              area: widget.area,
+                              problem: widget.problem,
+                              index1: widget.index1,
+                              index2: widget.index2),
                           const SizedBox(
                             height: 40,
                           )
@@ -61,14 +74,18 @@ class ProblemScreenVU extends StackedView<ProblemScreenVM> {
                   ],
                 ),
               ),
-              HeaderButtons(scaffoldKey: scaffoldKey),
+              HeaderButtons(
+                widgetScaffoldkey: _scaffoldKey,
+                routeName: MyAppRouteConstants.questionRouteName,
+                params: {
+                  'area': widget.area,
+                  'index1': widget.index1.toString(),
+                },
+              ),
             ],
           ),
         ));
   }
-
-  @override
-  ProblemScreenVM viewModelBuilder(BuildContext context) => ProblemScreenVM();
 }
 
 // class GenericAnswers extends StatelessWidget {
@@ -220,15 +237,15 @@ class GenericAnswers extends StatelessWidget {
                     GoRouter.of(context).pushNamed(
                       MyAppRouteConstants.solutionRouteName,
                       params: {
-                        'area': "${area}",
-                        'index1': '${index1}',
-                        'index2': '${index2}',
-                        'index3': '${index3}',
-                        'problemCause':
-                            '${viewModel.record[index1].questions[index2].options[index3].title}' ??
-                                "",
+                        'area': area,
+                        'index1': index1.toString(),
+                        'index2': index2.toString(),
+                        'index3': index3.toString(),
+                        'problemCause': viewModel.record[index1]
+                                .questions[index2].options[index3].title ??
+                            "",
                         'problem':
-                            '${viewModel.record[index1].questions[index2].title}' ??
+                            viewModel.record[index1].questions[index2].title ??
                                 ""
                       },
                     );
@@ -288,15 +305,15 @@ class GenericAnswers extends StatelessWidget {
                     GoRouter.of(context).pushNamed(
                       MyAppRouteConstants.solutionRouteName,
                       params: {
-                        'area': "${area}",
-                        'index1': '${index1}',
-                        'index2': '${index2}',
-                        'index3': '${index3}',
-                        'problemCause':
-                            '${viewModel.record[index1].questions[index2].options[index3].title}' ??
-                                "",
+                        'area': area,
+                        'index1': index1.toString(),
+                        'index2': index2.toString(),
+                        'index3': index3.toString(),
+                        'problemCause': viewModel.record[index1]
+                                .questions[index2].options[index3].title ??
+                            "",
                         'problem':
-                            '${viewModel.record[index1].questions[index2].title}' ??
+                            viewModel.record[index1].questions[index2].title ??
                                 ""
                       },
                     );

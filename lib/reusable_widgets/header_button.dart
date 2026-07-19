@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 
-import 'theme/theme_provider.dart';
+import 'theme/theme_controller.dart';
 
 class HeaderButtons extends StatelessWidget {
   final bool onBack;
-  final GlobalKey<ScaffoldState> scaffoldKey;
+  final GlobalKey<ScaffoldState> widgetScaffoldkey;
+  final String? routeName;
+  final Map<String, String>? params;
   const HeaderButtons({
     super.key,
     this.onBack = true,
-    required this.scaffoldKey,
+    required this.widgetScaffoldkey,
+    this.routeName,
+    this.params,
   });
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final themeController = Get.put(ThemeController());
+    // final themeProvider = Provider.of<ThemeProvider>(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -27,9 +33,10 @@ class HeaderButtons extends StatelessWidget {
                   color: Theme.of(context).dialogBackgroundColor,
                   boxShadow: [
                     BoxShadow(
-                      color: themeProvider.themeMode == ThemeMode.light
-                          ? Colors.grey.withOpacity(0.5)
-                          : Colors.grey.withOpacity(0 ), // Shadow color
+                      color: themeController.isLightTheme
+                          ? Colors.grey.withOpacity(0) // Shadow color
+                          : Colors.grey.withOpacity(0.5),
+                      // color: Colors.grey.withOpacity(0.5), // Shadow color
                       spreadRadius: 2, // Spread radius
                       blurRadius: 5, // Blur radius
                       offset: const Offset(0, 3), // Offset in the x,y direction
@@ -38,7 +45,12 @@ class HeaderButtons extends StatelessWidget {
                 ),
                 child: IconButton(
                     onPressed: () {
-                      Navigator.pop(context);
+                      routeName != null
+                          ? GoRouter.of(context).pushNamed(
+                              routeName!,
+                              params: params ?? {},
+                            )
+                          : Navigator.pop(context);
                     },
                     icon: const Icon(Icons.arrow_back)))
             : const Text(""),
@@ -60,7 +72,10 @@ class HeaderButtons extends StatelessWidget {
             ),
             child: IconButton(
                 onPressed: () {
-                  scaffoldKey.currentState?.openEndDrawer();
+                  widgetScaffoldkey.currentState?.openEndDrawer();
+                  // _scaffoldKey.currentState?.openDrawer();
+                  // Scaffold.of(context1).openDrawer();
+                  // print("Clicked");
                 },
                 icon: const Icon(
                   Icons.tune,

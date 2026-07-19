@@ -1,25 +1,41 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get/get.dart';
+import 'package:troubleshooter/reusable_widgets/theme/theme.dart';
 
-import 'reusable_widgets/theme/theme_provider.dart';
+import 'firebase_options.dart';
+import 'reusable_widgets/theme/theme_controller.dart';
 import 'routing/app_route_config.dart';
 
-void main() {
-  runApp(ChangeNotifierProvider(
-      create: (_) => ThemeProvider(), child: const MyApp()));
+Future<void> main() async {
+  await dotenv.load(fileName: ".env"); 
+  // await analytics.logLogin();
+
+  // FirebaseAnalytics.instance.logLogin();
+
+  /// Initialize firebase analytics *
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
-    return MaterialApp.router(
+    // final themeProvider = Provider.of<ThemeProvider>(context);
+    final themeController = Get.put(ThemeController());
+    return GetMaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'PSA Troubleshooter',
-      theme: themeProvider.themeData,
-      darkTheme: themeProvider.themeData,
-      themeMode: themeProvider.themeMode,
+      theme: Themes().lightTheme,
+      darkTheme: Themes().darkTheme,
+      themeMode:
+          themeController.isLightTheme ? ThemeMode.dark : ThemeMode.light,
       // routerConfig: MyAppRouter().router,
       routeInformationParser:
           MyAppRouter.returnRouter(false).routeInformationParser,

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:stacked/stacked.dart';
 
 import '../reusable_widgets/header_button.dart';
 import '../reusable_widgets/header_vu.dart';
@@ -8,28 +7,41 @@ import '../reusable_widgets/sidemenu/sidemenu_vu.dart';
 import '../routing/app_route_consts.dart';
 import 'booster_compressor_screen_vm.dart';
 
-class ProblemBoosterCompressorScreenVU
-    extends StackedView<BoosterCompressorScreenVM> {
+class ProblemBoosterCompressorScreenVU extends StatefulWidget {
   final String area;
   final int index1;
   final int index2;
   final String question;
-  ProblemBoosterCompressorScreenVU(
+  const ProblemBoosterCompressorScreenVU(
       {super.key,
       required this.area,
       required this.question,
       required this.index1,
       required this.index2});
-  final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
-  Widget builder(BuildContext context, BoosterCompressorScreenVM viewModel,
-      Widget? child) {
+  State<ProblemBoosterCompressorScreenVU> createState() =>
+      _ProblemBoosterCompressorScreenVUState();
+}
+
+class _ProblemBoosterCompressorScreenVUState
+    extends State<ProblemBoosterCompressorScreenVU> {
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+  late final BoosterCompressorScreenVM _viewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    _viewModel = BoosterCompressorScreenVM();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     return Scaffold(
         key: scaffoldKey,
         endDrawer: GenericDrawerVU(scaffoldKey: scaffoldKey),
-        // backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         // backgroundColor: const Color.fromARGB(255, 238, 238, 238),
         body: Ink(
           // color: const Color.fromARGB(255, 238, 238, 238),
@@ -40,19 +52,19 @@ class ProblemBoosterCompressorScreenVU
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    GenericHeader(title: area),
+                    GenericHeader(title: widget.area),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 14),
                       child: Column(
                         children: [
                           // const SizedBox(height: 20),
                           GenericAnswers(
-                              viewModel: viewModel,
+                              viewModel: _viewModel,
                               screenSize: screenSize,
-                              area: area,
-                              question: question,
-                              index1: index1,
-                              index2: index2),
+                              area: widget.area,
+                              question: widget.question,
+                              index1: widget.index1,
+                              index2: widget.index2),
                           const SizedBox(
                             height: 40,
                           )
@@ -62,15 +74,18 @@ class ProblemBoosterCompressorScreenVU
                   ],
                 ),
               ),
-              HeaderButtons(scaffoldKey: scaffoldKey),
+              HeaderButtons(
+                widgetScaffoldkey: scaffoldKey,
+                routeName: MyAppRouteConstants.bcQuestionRouteName,
+                params: {
+                  'area': widget.area,
+                  'index1': widget.index1.toString(),
+                },
+              ),
             ],
           ),
         ));
   }
-
-  @override
-  BoosterCompressorScreenVM viewModelBuilder(BuildContext context) =>
-      BoosterCompressorScreenVM();
 }
 
 // class GenericAnswers extends StatelessWidget {

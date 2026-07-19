@@ -1,25 +1,60 @@
+// ignore_for_file: library_private_types_in_public_api
+
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
-import 'package:stacked/stacked.dart';
 
 import '../reusable_widgets/header_button.dart';
 import '../reusable_widgets/header_vu.dart';
-// import '../reusable_widgets/side_menu.dart';
 import '../reusable_widgets/sidemenu/sidemenu_vu.dart';
+import '../reusable_widgets/theme/theme_controller.dart';
 import '../routing/app_route_consts.dart';
-import 'home_screen_vm.dart';
 
-class HomeScreenVU extends StackedView<HomeScreenVM> {
-  HomeScreenVU({super.key});
-  final scaffoldKey = GlobalKey<ScaffoldState>();
+class HomeScreenVU extends StatefulWidget {
+  const HomeScreenVU({super.key});
 
   @override
-  Widget builder(BuildContext context, HomeScreenVM viewModel, Widget? child) {
+  _HomeScreenVUState createState() => _HomeScreenVUState();
+}
+
+// HomeScreenVU({super.key});
+// // final scaffoldKey = GlobalKey<ScaffoldState>();
+
+class _HomeScreenVUState extends State<HomeScreenVU> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  bool isLightThemeBool = false;
+  bool onhover = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _logScreenView();
+  }
+
+  Future<void> _logScreenView() async {
+    FirebaseAnalytics.instance.logLogin();
+    // await _analytics.setCurrentScreen(screenName: 'Home Screen');
+    // await _analytics.logEvent(
+    //   name: 'screen_view',
+    //   parameters: {
+    //     'screen_name': 'Home Screen',
+    //     'screen_class': 'HomeScreenVU',
+    //   },
+    // );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+
     return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        key: scaffoldKey,
-        endDrawer: GenericDrawerVU(scaffoldKey: scaffoldKey),
+        key: _scaffoldKey,
+        // appBar: AppBar(),
+        // drawer: const CustomDrawer(),
+        endDrawer: GenericDrawerVU(scaffoldKey: _scaffoldKey),
         body: Stack(
           // alignment: Alignment.topRight,
           children: [
@@ -30,34 +65,40 @@ class HomeScreenVU extends StackedView<HomeScreenVM> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
+                    // Text(
+                    //   'Click on switch to change to ${_isLightThemeBool ? 'Dark' : 'Light'} theme',
+                    // ),
+                    // Switch(
+                    //   value: viewModel.isLightThemeBool,
+                    //   onChanged: (value) {
+                    //     viewModel.isLightThemeBool = value;
+                    //     viewModel.notifyListeners();
+                    //     Get.changeThemeMode(
+                    //       value ? ThemeMode.light : ThemeMode.dark,
+                    //     );
+                    //   },
+                    //   // value: viewModel.isLightThemeBool,
+                    //   // onChanged: (val) {
+                    //   //   viewModel.saveThemeStatus(val);
+                    //   //   Get.changeThemeMode(
+                    //   //     val ? ThemeMode.light : ThemeMode.dark,
+                    //   //   );
+                    //   // },
+                    // ),
                     const GenericHeader(
-                      title: 'System Areas',
+                      title: 'System Areas ',
+
                       // color: Colors.white,
                     ),
-                    // screenSize.width < 1100
-                    //     ?
                     MainImgClickablewidget(screenSize: screenSize),
-                    // : const Row(
-                    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    //     children: [
-                    //       Text(
-                    //         "PSA\nTROUBLESHOOTER\nAPP",
-                    //         style: TextStyle(
-                    //             fontSize: 52,
-                    //             fontWeight: FontWeight.w800,
-                    //             fontFamily: 'Montserrat'),
-                    //       ),
-                    //       MainImgClickablewidget(),
-                    //     ],
-                    //   ),
-                    SizedBox(
+                    const SizedBox(
                       height: 40,
                     ),
                   ],
                 ),
               ),
             ),
-            HeaderButtons(onBack: false, scaffoldKey: scaffoldKey)
+            HeaderButtons(onBack: false, widgetScaffoldkey: _scaffoldKey)
             // Container(
             //     margin: const EdgeInsets.fromLTRB(0, 12, 12, 0),
             //     decoration: BoxDecoration(
@@ -73,9 +114,6 @@ class HomeScreenVU extends StackedView<HomeScreenVM> {
           ],
         ));
   }
-
-  @override
-  HomeScreenVM viewModelBuilder(BuildContext context) => HomeScreenVM();
 }
 
 class MainImgClickablewidget extends StatelessWidget {
@@ -87,6 +125,7 @@ class MainImgClickablewidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeController = Get.put(ThemeController());
     return Padding(
       padding: const EdgeInsets.only(top: 10),
       child: screenSize.width > 600
@@ -94,7 +133,11 @@ class MainImgClickablewidget extends StatelessWidget {
               height: 800,
               child: Stack(
                 children: [
-                  const Image(image: AssetImage('lib/assets/mainscreens.png')),
+                  themeController.isLightTheme
+                      ? const Image(
+                          image: AssetImage('lib/assets/mainscreensDm.png'))
+                      : const Image(
+                          image: AssetImage('lib/assets/mainscreensLm.png')),
                   SizedBox(
                     width: 320,
                     child: Column(
@@ -152,7 +195,7 @@ class MainImgClickablewidget extends StatelessWidget {
                               // ),
                             ),
                             Container(
-                              margin: const EdgeInsets.only(left: 85, top: 14),
+                              margin: const EdgeInsets.only(left: 90, top: 14),
                               color: const Color.fromARGB(0, 244, 67, 54),
                               width: 80,
                               height: 100,
@@ -161,9 +204,9 @@ class MainImgClickablewidget extends StatelessWidget {
                                     Colors.transparent),
                                 hoverColor: Colors.transparent,
                                 onTap: () {
-                                  final path =
-                                      '/question/${Uri.encodeComponent("Refrigerated Dryer")}/${"1"}';
-                                  print(path);
+                                  // final path =
+                                  //     '/question/${Uri.encodeComponent("Refrigerated Dryer")}/${"1"}';
+                                  // print(path);
                                   GoRouter.of(context).pushNamed(
                                     MyAppRouteConstants.questionRouteName,
                                     params: {
@@ -282,7 +325,7 @@ class MainImgClickablewidget extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              margin: const EdgeInsets.only(left: 150, top: 0),
+                              margin: const EdgeInsets.only(left: 160, top: 27),
                               color: const Color.fromARGB(0, 255, 188, 184),
                               width: 160,
                               height: 100,
@@ -322,7 +365,11 @@ class MainImgClickablewidget extends StatelessWidget {
               height: 600,
               child: Stack(
                 children: [
-                  const Image(image: AssetImage('lib/assets/mainscreens.png')),
+                  themeController.isLightTheme
+                      ? const Image(
+                          image: AssetImage('lib/assets/mainscreensDm.png'))
+                      : const Image(
+                          image: AssetImage('lib/assets/mainscreensLm.png')),
                   SizedBox(
                     width: 320,
                     child: Column(
@@ -331,10 +378,10 @@ class MainImgClickablewidget extends StatelessWidget {
                       children: [
                         Container(
                           margin: const EdgeInsets.only(
-                            top: 10,
-                            // left: 8,
-                            // bottom: 25,
-                          ),
+                              // top: 10,
+                              // left: 8,
+                              // bottom: 25,
+                              ),
                           color: const Color.fromARGB(0, 255, 193, 7),
                           width: 145,
                           height: 100,
@@ -373,7 +420,7 @@ class MainImgClickablewidget extends StatelessWidget {
                               // ),
                             ),
                             Container(
-                              margin: const EdgeInsets.only(left: 40, top: 0),
+                              margin: const EdgeInsets.only(left: 45, top: 0),
                               color: Colors.transparent,
                               width: 70,
                               height: 80,
@@ -415,7 +462,7 @@ class MainImgClickablewidget extends StatelessWidget {
                             ),
                             Container(
                               margin: const EdgeInsets.only(left: 89, top: 0),
-                              color: Color.fromARGB(0, 255, 24, 12),
+                              color: const Color.fromARGB(0, 255, 24, 12),
                               width: 60,
                               height: 120,
                               child: InkWell(
@@ -442,7 +489,7 @@ class MainImgClickablewidget extends StatelessWidget {
                           children: [
                             Container(
                               margin: const EdgeInsets.only(top: 18, left: 42),
-                              color: Color.fromARGB(0, 16, 138, 238),
+                              color: const Color.fromARGB(0, 16, 138, 238),
                               width: 40,
                               height: 120,
                               child: InkWell(
@@ -456,7 +503,7 @@ class MainImgClickablewidget extends StatelessWidget {
                             ),
                             Container(
                               margin: const EdgeInsets.only(left: 115, top: 8),
-                              color: Color.fromARGB(0, 214, 19, 9),
+                              color: const Color.fromARGB(0, 214, 19, 9),
                               width: 35,
                               height: 80,
                               // child: InkWell(
@@ -475,7 +522,7 @@ class MainImgClickablewidget extends StatelessWidget {
                           children: [
                             Container(
                               margin: const EdgeInsets.only(left: 120, top: 0),
-                              color: Color.fromARGB(0, 189, 31, 23),
+                              color: const Color.fromARGB(0, 189, 31, 23),
                               width: 130,
                               height: 80,
                               child: InkWell(

@@ -1,6 +1,6 @@
 {
-    "name": "troubleshooter",
-    "short_name": "troubleshooter",
+    "name": "haiderwebapp",
+    "short_name": "haiderwebapp",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

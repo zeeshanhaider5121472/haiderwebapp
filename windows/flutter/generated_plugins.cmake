@@ -3,7 +3,9 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  share_plus
+  audioplayers_windows
+  firebase_core
+  share_plus_windows
   url_launcher_windows
 )
 

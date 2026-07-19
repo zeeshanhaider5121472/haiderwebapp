@@ -1,29 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
-import 'package:stacked/stacked.dart';
 import 'package:troubleshooter/question_screen/question_screen_vm.dart';
 import 'package:troubleshooter/reusable_widgets/header_button.dart';
 
 import '../reusable_widgets/header_vu.dart';
 import '../reusable_widgets/sidemenu/sidemenu_vu.dart';
-import '../reusable_widgets/theme/theme_provider.dart';
 import '../routing/app_route_consts.dart';
 
-class QuestionScreenVU extends StackedView<QuestionScreenVM> {
-  final String area;
+class QuestionScreenVU extends StatefulWidget {
   final int index1;
-  QuestionScreenVU({required this.index1, required this.area, super.key});
-  final scaffoldKey = GlobalKey<ScaffoldState>();
+  final String area;
+
+  const QuestionScreenVU({
+    super.key,
+    required this.index1,
+    required this.area,
+  });
 
   @override
-  Widget builder(
-      BuildContext context, QuestionScreenVM viewModel, Widget? child) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+  State<QuestionScreenVU> createState() => _QuestionScreenState();
+}
+
+class _QuestionScreenState extends State<QuestionScreenVU> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  late final QuestionScreenVM _viewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    _viewModel = QuestionScreenVM();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // final themeProvider = Provider.of<ThemeProvider>(context);
     final screenSize = MediaQuery.of(context).size;
     return Scaffold(
-        key: scaffoldKey,
-        endDrawer: GenericDrawerVU(scaffoldKey: scaffoldKey),
+        key: _scaffoldKey,
+        // drawer: const CustomDrawer(),
+        endDrawer: GenericDrawerVU(scaffoldKey: _scaffoldKey),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Ink(
           child: Stack(
@@ -33,7 +48,7 @@ class QuestionScreenVU extends StackedView<QuestionScreenVM> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    GenericHeader(title: area),
+                    GenericHeader(title: widget.area),
                     // const SizedBox(
                     //   height: 16,
                     // ),
@@ -41,13 +56,13 @@ class QuestionScreenVU extends StackedView<QuestionScreenVM> {
                       padding: const EdgeInsets.symmetric(horizontal: 14),
                       child: Column(
                         children: [
-                          ImageContainer(index1: index1),
+                          ImageContainer(index1: widget.index1),
                           const SizedBox(height: 16),
                           GenericAnswers(
-                              viewModel: viewModel,
+                              viewModel: _viewModel,
                               screenSize: screenSize,
-                              index1: index1,
-                              area: area),
+                              index1: widget.index1,
+                              area: widget.area),
                           const SizedBox(height: 40),
                         ],
                       ),
@@ -56,15 +71,16 @@ class QuestionScreenVU extends StackedView<QuestionScreenVM> {
                 ),
               ),
               HeaderButtons(
-                scaffoldKey: scaffoldKey,
+                widgetScaffoldkey: _scaffoldKey,
+                routeName: MyAppRouteConstants.homeRouteName,
               )
             ],
           ),
         ));
   }
 
-  @override
-  QuestionScreenVM viewModelBuilder(BuildContext context) => QuestionScreenVM();
+  // @override
+  // QuestionScreenVM viewModelBuilder(BuildContext context) => QuestionScreenVM();
 }
 
 class GenericAnswers extends StatelessWidget {
@@ -133,11 +149,11 @@ class GenericAnswers extends StatelessWidget {
                     GoRouter.of(context).pushNamed(
                       MyAppRouteConstants.problemRouteName,
                       params: {
-                        'area': "${area}",
-                        'index1': '${index1}',
-                        'index2': '${index2}',
+                        'area': area,
+                        'index1': index1.toString(),
+                        'index2': index2.toString(),
                         'problem':
-                            '${viewModel.record[index1].questions[index2].title}' ??
+                            viewModel.record[index1].questions[index2].title ??
                                 ""
                       },
                     );
@@ -207,11 +223,11 @@ class GenericAnswers extends StatelessWidget {
                     GoRouter.of(context).pushNamed(
                       MyAppRouteConstants.problemRouteName,
                       params: {
-                        'area': "${area}",
-                        'index1': '${index1}',
-                        'index2': '${index2}',
+                        'area': area,
+                        'index1': index1.toString(),
+                        'index2': index2.toString(),
                         'problem':
-                            '${viewModel.record[index1].questions[index2].title}' ??
+                            viewModel.record[index1].questions[index2].title ??
                                 ""
                       },
                     );

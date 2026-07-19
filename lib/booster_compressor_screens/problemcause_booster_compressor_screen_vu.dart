@@ -9,7 +9,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:stacked/stacked.dart';
 
 import '../reusable_widgets/header_button.dart';
 import '../reusable_widgets/header_vu.dart';
@@ -17,8 +16,7 @@ import '../reusable_widgets/sidemenu/sidemenu_vu.dart';
 import '../routing/app_route_consts.dart';
 import 'booster_compressor_screen_vm.dart';
 
-class ProblemCauseCompressorScreenVU
-    extends StackedView<BoosterCompressorScreenVM> {
+class ProblemCauseCompressorScreenVU extends StatefulWidget {
   final String area;
   final int index1;
   final int index2;
@@ -27,7 +25,7 @@ class ProblemCauseCompressorScreenVU
   final String problem;
   final String question;
   final String immediateaction;
-  ProblemCauseCompressorScreenVU(
+  const ProblemCauseCompressorScreenVU(
       {super.key,
       required this.area,
       required this.problem,
@@ -37,11 +35,26 @@ class ProblemCauseCompressorScreenVU
       required this.index3,
       required this.index4,
       required this.index2});
-  final scaffoldKey = GlobalKey<ScaffoldState>();
+  // final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
-  Widget builder(BuildContext context, BoosterCompressorScreenVM viewModel,
-      Widget? child) {
+  State<ProblemCauseCompressorScreenVU> createState() =>
+      _ProblemCauseCompressorScreenVUState();
+}
+
+class _ProblemCauseCompressorScreenVUState
+    extends State<ProblemCauseCompressorScreenVU> {
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+  late final BoosterCompressorScreenVM _viewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    _viewModel = BoosterCompressorScreenVM();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     return Scaffold(
         key: scaffoldKey,
@@ -57,23 +70,23 @@ class ProblemCauseCompressorScreenVU
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    GenericHeader(title: area),
+                    GenericHeader(title: widget.area),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 14),
                       child: Column(
                         children: [
                           // const SizedBox(height: 20),
                           GenericAnswers(
-                            viewModel: viewModel,
+                            viewModel: _viewModel,
                             screenSize: screenSize,
-                            area: area,
-                            immediateaction: immediateaction,
-                            problem: problem,
-                            question: question,
-                            index1: index1,
-                            index2: index2,
-                            index3: index3,
-                            index4: index4,
+                            area: widget.area,
+                            immediateaction: widget.immediateaction,
+                            problem: widget.problem,
+                            question: widget.question,
+                            index1: widget.index1,
+                            index2: widget.index2,
+                            index3: widget.index3,
+                            index4: widget.index4,
                           ),
                           const SizedBox(
                             height: 40,
@@ -84,15 +97,20 @@ class ProblemCauseCompressorScreenVU
                   ],
                 ),
               ),
-              HeaderButtons(scaffoldKey: scaffoldKey),
+              HeaderButtons(
+                widgetScaffoldkey: scaffoldKey,
+                routeName: MyAppRouteConstants.bcProblemRouteName,
+                params: {
+                  'area': widget.area,
+                  'question': widget.question,
+                  'index1': widget.index1.toString(),
+                  'index2': widget.index2.toString(),
+                },
+              ),
             ],
           ),
         ));
   }
-
-  @override
-  BoosterCompressorScreenVM viewModelBuilder(BuildContext context) =>
-      BoosterCompressorScreenVM();
 }
 
 // class GenericAnswers extends StatelessWidget {

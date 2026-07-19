@@ -1,16 +1,15 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:stacked/stacked.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:troubleshooter/routing/app_route_consts.dart';
 
 import '../htu_vu.dart';
 import '../reusable_widgets/header_button.dart';
 import '../reusable_widgets/header_vu.dart';
 import '../reusable_widgets/sidemenu/sidemenu_vu.dart';
-import '../reusable_widgets/theme/theme_provider.dart';
 import 'booster_compressor_screen_vm.dart';
 
-class BoosterCompressorSolutionScreenVU
-    extends StackedView<BoosterCompressorScreenVM> {
+class BoosterCompressorSolutionScreenVU extends StatefulWidget {
   final int index1;
   final int index2;
   final int index3;
@@ -21,7 +20,7 @@ class BoosterCompressorSolutionScreenVU
   final String problem;
   final String immediateaction;
   final String problemCause;
-  BoosterCompressorSolutionScreenVU(
+  const BoosterCompressorSolutionScreenVU(
       {required this.index1,
       required this.index2,
       required this.index3,
@@ -33,12 +32,25 @@ class BoosterCompressorSolutionScreenVU
       required this.problem,
       required this.immediateaction,
       required this.problemCause});
+  @override
+  State<BoosterCompressorSolutionScreenVU> createState() =>
+      _BoosterCompressorSolutionScreenVUState();
+}
+
+class _BoosterCompressorSolutionScreenVUState
+    extends State<BoosterCompressorSolutionScreenVU> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  late final BoosterCompressorScreenVM _viewModel;
 
   @override
-  Widget builder(BuildContext context, BoosterCompressorScreenVM viewModel,
-      Widget? child) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+  void initState() {
+    super.initState();
+    _viewModel = BoosterCompressorScreenVM();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // final themeProvider = Provider.of<ThemeProvider>(context);
     final screenSize = MediaQuery.of(context).size;
     return Scaffold(
       key: scaffoldKey,
@@ -78,29 +90,41 @@ class BoosterCompressorSolutionScreenVU
                           child: Column(
                             children: [
                               _GenericSolutionContainer(
-                                  title: "Area", data: area),
+                                  title: "Area", data: widget.area),
                               _GenericSolutionContainer(
-                                  title: "Question", data: question),
+                                  title: "Question", data: widget.question),
                               _GenericSolutionContainer(
-                                  title: "Problem", data: problem),
+                                  title: "Problem", data: widget.problem),
 
                               _GenericSolutionContainer(
-                                  title: "Problem Cause", data: problemCause),
+                                  title: "Problem Cause",
+                                  data: widget.problemCause),
                               _GenericLVBContainer(
-                                viewModel: viewModel,
+                                viewModel: _viewModel,
                                 title: "Solution",
-                                index1: index1,
-                                index2: index2,
-                                index3: index3,
-                                index4: index4,
-                                index5: index5,
+                                index1: widget.index1,
+                                index2: widget.index2,
+                                index3: widget.index3,
+                                index4: widget.index4,
+                                index5: widget.index5,
                               ),
                               _GenericSolutionContainer(
                                   title: "Immediate Action",
-                                  data: immediateaction),
+                                  data: widget.immediateaction),
 
                               screenSize.width < 600
-                                  ? ShareButton(themeProvider: themeProvider)
+                                  ? ShareButton(
+                                      index1: widget.index1,
+                                      index2: widget.index2,
+                                      index3: widget.index3,
+                                      index4: widget.index4,
+                                      area: widget.area,
+                                      problem: widget.problem,
+                                      immediateaction: widget.immediateaction,
+                                      problemCause: widget.problemCause,
+                                      index5: widget.index5,
+                                      question: widget.question,
+                                    )
                                   : const SizedBox()
 
                               // Container(
@@ -326,14 +350,27 @@ class BoosterCompressorSolutionScreenVU
                             ],
                           ),
                         ),
-                        const SizedBox(
-                          width: 20,
-                        ),
+                        screenSize.width > 600
+                            ? const SizedBox(
+                                width: 20,
+                              )
+                            : const SizedBox(
+                                width: 0,
+                              ),
 
                         screenSize.width > 600
                             ? Expanded(
                                 child: ShareButton(
-                                themeProvider: themeProvider,
+                                area: widget.area,
+                                question: widget.question,
+                                problem: widget.problem,
+                                immediateaction: widget.immediateaction,
+                                problemCause: widget.problemCause,
+                                index1: widget.index1,
+                                index2: widget.index2,
+                                index3: widget.index3,
+                                index4: widget.index4,
+                                index5: widget.index5,
                               ))
                             : const SizedBox()
 
@@ -466,36 +503,74 @@ class BoosterCompressorSolutionScreenVU
             ),
           ),
           HeaderButtons(
-            scaffoldKey: scaffoldKey,
+            widgetScaffoldkey: scaffoldKey,
+            routeName: MyAppRouteConstants.bcProblemCauseRouteName,
+            params: {
+              'area': widget.area,
+              'question': widget.question,
+              'immediateaction': widget.immediateaction,
+              'problem': widget.problem,
+              'index1': widget.index1.toString(),
+              'index2': widget.index2.toString(),
+              'index3': widget.index3.toString(),
+              'index4': widget.index4.toString(),
+            },
           )
         ],
       ),
     );
   }
-
-  @override
-  BoosterCompressorScreenVM viewModelBuilder(BuildContext context) =>
-      BoosterCompressorScreenVM();
 }
 
 class ShareButton extends StatelessWidget {
-  final ThemeProvider themeProvider;
+  // final ThemeProvider themeProvider;
+  final String area;
+  final String question;
+  final String immediateaction;
+  final String problem;
+  final String problemCause;
+  final int index1;
+  final int index2;
+  final int index3;
+  final int index4;
+  final int index5;
 
   const ShareButton({
     super.key,
-    required this.themeProvider,
+    // required this.themeProvider,
+    required this.index1,
+    required this.index2,
+    required this.index3,
+    required this.index4,
+    required this.index5,
+    required this.area,
+    required this.question,
+    required this.immediateaction,
+    required this.problem,
+    required this.problemCause,
   });
 
   @override
   Widget build(BuildContext context) {
+    // String baseUrl = 'https://haider-web-app.vercel.app/#';
+    // String baseUrl = dotenv.env['SHARE_DOMAIN']!;
+    String baseUrl = '${Uri.base.origin}/#';
+
+    String dynamicUrl = Uri(
+            path:
+                '/$area/bcproblemcause/$question/$problem/$immediateaction/$problemCause/$index1/$index2/$index3/$index4/$index5')
+        .toString();
+    String url = '$baseUrl$dynamicUrl';
     return Container(
       width: 594,
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
       decoration: BoxDecoration(
-        color: themeProvider.themeMode == ThemeMode.light
-            ? const Color.fromARGB(255, 229, 232, 235)
-            : Theme.of(context).dialogBackgroundColor,
+        color: Theme.of(context).secondaryHeaderColor,
+
+        // color: themeProvider.themeMode == ThemeMode.light
+        //     ? const Color.fromARGB(255, 229, 232, 235)
+        //     : Theme.of(context).dialogBackgroundColor,
         borderRadius: BorderRadius.circular(18),
       ),
       child: SingleChildScrollView(
@@ -521,6 +596,14 @@ class ShareButton extends StatelessWidget {
               height: 45,
               child: PrimaryButton(
                 onPressed: () {
+                  // FirebaseAnalytics.instance.logEvent(name: 'Solution: \n$url');
+
+                  FirebaseAnalytics.instance.logEvent(
+                    name: 'Solution:',
+                    parameters: {'url': url},
+                  );
+                  // print(url);
+                  Share.share('Check out my Solution \n$url');
                   // Navigator.push(
                   //     context,
                   //     MaterialPageRoute(

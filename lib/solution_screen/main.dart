@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
             background: const Color(0XFFf1f3f5), seedColor: Colors.deepPurple),
         //   // useMaterial3: true,
       ),
-      home: SolutionScreenVU(
+      home: const SolutionScreenVU(
         index1: 0,
         index2: 0,
         index3: 0,

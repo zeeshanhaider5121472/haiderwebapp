@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_const
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:troubleshooter/booster_compressor_screens/problem_booster_compressor_screen_vu.dart';
@@ -21,7 +23,7 @@ class MyAppRouter {
         GoRoute(
           name: MyAppRouteConstants.homeRouteName,
           path: '/',
-          pageBuilder: (context, state) => MaterialPage(child: HomeScreenVU()),
+          pageBuilder: (context, state) => const MaterialPage(child: const HomeScreenVU()),
         ),
         GoRoute(
           name: MyAppRouteConstants.questionRouteName,

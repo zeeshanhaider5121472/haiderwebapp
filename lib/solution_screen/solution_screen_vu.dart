@@ -1,23 +1,23 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+// import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:stacked/stacked.dart';
 
 import '../htu_vu.dart';
 import '../reusable_widgets/header_button.dart';
 import '../reusable_widgets/header_vu.dart';
 import '../reusable_widgets/sidemenu/sidemenu_vu.dart';
-import '../reusable_widgets/theme/theme_provider.dart';
+import '../routing/app_route_consts.dart';
 import 'solution_screen_vm.dart';
 
-class SolutionScreenVU extends StackedView<SolutionScreenVM> {
+class SolutionScreenVU extends StatefulWidget {
   final int index1;
   final int index2;
   final int index3;
   final String area;
   final String problem;
   final String problemCause;
-  SolutionScreenVU(
+  const SolutionScreenVU(
       {required this.index1,
       required this.index2,
       required this.index3,
@@ -25,16 +25,27 @@ class SolutionScreenVU extends StackedView<SolutionScreenVM> {
       required this.area,
       required this.problem,
       required this.problemCause});
-  final scaffoldKey = GlobalKey<ScaffoldState>();
+  @override
+  State<SolutionScreenVU> createState() => _SolutionScreenVUState();
+}
+
+class _SolutionScreenVUState extends State<SolutionScreenVU> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  late final SolutionScreenVM _viewModel;
 
   @override
-  Widget builder(
-      BuildContext context, SolutionScreenVM viewModel, Widget? child) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+  void initState() {
+    super.initState();
+    _viewModel = SolutionScreenVM();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // final themeProvider = Provider.of<ThemeProvider>(context);
     final screenSize = MediaQuery.of(context).size;
     return Scaffold(
-      key: scaffoldKey,
-      endDrawer: GenericDrawerVU(scaffoldKey: scaffoldKey),
+      key: _scaffoldKey,
+      endDrawer: GenericDrawerVU(scaffoldKey: _scaffoldKey),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       // backgroundColor: const Color.fromARGB(255, 238, 238, 238),
 
@@ -65,29 +76,31 @@ class SolutionScreenVU extends StackedView<SolutionScreenVM> {
                           child: Column(
                             children: [
                               _GenericSolutionContainer(
-                                  title: "Area", data: area),
+                                  title: "Area", data: widget.area),
                               _GenericSolutionContainer(
-                                  title: "Problem", data: problem),
+                                  title: "Problem", data: widget.problem),
                               _GenericSolutionContainer(
-                                  title: "Problem Cause", data: problemCause),
+                                  title: "Problem Cause",
+                                  data: widget.problemCause),
                               // _GenericSolutionContainer(
                               //     title: "Solution", data: solution),
                               _GenericLVBContainer(
-                                  viewModel: viewModel,
+                                  viewModel: _viewModel,
                                   title: "Solution",
-                                  index1: index1,
-                                  index2: index2,
-                                  index3: index3),
+                                  index1: widget.index1,
+                                  index2: widget.index2,
+                                  index3: widget.index3),
 
                               screenSize.width < 600
                                   ? ShareButton(
-                                      themeProvider: themeProvider,
-                                      index1: index1,
-                                      index2: index2,
-                                      index3: index3,
-                                      area: area,
-                                      problem: problem,
-                                      problemCause: problemCause)
+                                      // themeProvider: themeProvider,
+                                      index1: widget.index1,
+                                      index2: widget.index2,
+                                      index3: widget.index3,
+                                      area: widget.area,
+                                      problem: widget.problem,
+                                      problemCause: widget.problemCause,
+                                    )
                                   : const SizedBox()
 
                               // Container(
@@ -313,20 +326,24 @@ class SolutionScreenVU extends StackedView<SolutionScreenVM> {
                             ],
                           ),
                         ),
-                        const SizedBox(
-                          width: 20,
-                        ),
+                        screenSize.width > 600
+                            ? const SizedBox(
+                                width: 20,
+                              )
+                            : const SizedBox(
+                                width: 0,
+                              ),
 
                         screenSize.width > 600
                             ? Expanded(
                                 child: ShareButton(
-                                themeProvider: themeProvider,
-                                index1: index1,
-                                index2: index2,
-                                index3: index3,
-                                area: area,
-                                problem: problem,
-                                problemCause: problemCause,
+                                // themeProvider: themeProvider,
+                                index1: widget.index1,
+                                index2: widget.index2,
+                                index3: widget.index3,
+                                area: widget.area,
+                                problem: widget.problem,
+                                problemCause: widget.problemCause,
                               ))
                             : const SizedBox()
 
@@ -459,19 +476,22 @@ class SolutionScreenVU extends StackedView<SolutionScreenVM> {
             ),
           ),
           HeaderButtons(
-            scaffoldKey: scaffoldKey,
+            widgetScaffoldkey: _scaffoldKey,
+            routeName: MyAppRouteConstants.problemRouteName,
+            params: {
+              'area': widget.area,
+              'index1': widget.index1.toString(),
+              'index2': widget.index2.toString(),
+              'problem': widget.problem
+            },
           )
         ],
       ),
     );
   }
-
-  @override
-  SolutionScreenVM viewModelBuilder(BuildContext context) => SolutionScreenVM();
 }
 
 class ShareButton extends StatelessWidget {
-  final ThemeProvider themeProvider;
   final int index1;
   final int index2;
   final int index3;
@@ -480,7 +500,6 @@ class ShareButton extends StatelessWidget {
   final String problemCause;
   const ShareButton({
     super.key,
-    required this.themeProvider,
     required this.index1,
     required this.index2,
     required this.index3,
@@ -491,20 +510,29 @@ class ShareButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String baseUrl = 'https://haider-web-app.vercel.app/#';
+    // final themeController = Get.put(ThemeController());
+
+    // String baseUrl = 'https://haider-web-app.vercel.app/#';
+    // final currentUrl = Uri.parse(window.location.href);
+    // String baseUrl = dotenv.env['SHARE_DOMAIN']!;
+    String baseUrl = '${Uri.base.origin}/#';
     String dynamicUrl = Uri(
             path:
                 '/$area/solutions/$problem/$problemCause/$index1/$index2/$index3')
         .toString();
     String url = '$baseUrl$dynamicUrl';
+
+    // final qrimg = QrPainter(
+    //   data: url, // Include the protocol
+    //   version: QrVersions.auto,
+    // ).toImage(200);
     return Container(
       width: 594,
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
       decoration: BoxDecoration(
-        color: themeProvider.themeMode == ThemeMode.light
-            ? const Color.fromARGB(255, 229, 232, 235)
-            : Theme.of(context).dialogBackgroundColor,
+        // color: const Color.fromARGB(255, 229, 232, 235),
+        color: Theme.of(context).secondaryHeaderColor,
         borderRadius: BorderRadius.circular(18),
       ),
       child: SingleChildScrollView(
@@ -530,8 +558,11 @@ class ShareButton extends StatelessWidget {
               height: 45,
               child: PrimaryButton(
                 onPressed: () {
-                  print(url);
-                  // '/:area/solutions/:problem/:problemCause/:index1/:index2/:index3'
+                  FirebaseAnalytics.instance.logEvent(
+                    name: 'Solution:',
+                    parameters: {'url': url},
+                  );
+                  // print(url);
                   Share.share('Check out my Solution \n$url');
                   // Navigator.push(
                   //     context,
@@ -539,6 +570,16 @@ class ShareButton extends StatelessWidget {
                   //         builder: (context) => const HomeScreenVU()
                   //         ));
                 },
+                // () {
+                //   // print(url);
+                //   // '/:area/solutions/:problem/:problemCause/:index1/:index2/:index3'
+                //   Share.share('Check out my Solution \n$url');
+                //   // Navigator.push(
+                //   //     context,
+                //   //     MaterialPageRoute(
+                //   //         builder: (context) => const HomeScreenVU()
+                //   //         ));
+                // },
                 text: "Share",
               ),
             ),
@@ -638,7 +679,7 @@ class _GenericLVBContainer extends StatelessWidget {
         children: [
           Text(
               textAlign: TextAlign.left,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               title),
           const SizedBox(
             height: 2,
@@ -668,8 +709,8 @@ class _GenericLVBContainer extends StatelessWidget {
                                 .title ??
                             "",
                         style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
                         )),
                   ),
                 ],
@@ -707,7 +748,7 @@ class _GenericSolutionContainer extends StatelessWidget {
         children: [
           Text(
               textAlign: TextAlign.left,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
               title),
           const SizedBox(
             height: 2,
@@ -719,7 +760,7 @@ class _GenericSolutionContainer extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               data,
               style: const TextStyle(
-                fontSize: 12,
+                fontSize: 14,
                 fontWeight: FontWeight.w400,
               ))
         ],
