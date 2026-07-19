@@ -9,21 +9,27 @@ import 'reusable_widgets/theme/theme_controller.dart';
 import 'routing/app_route_config.dart';
 
 Future<void> main() async {
-  await dotenv.load(fileName: ".env"); 
-  // await analytics.logLogin();
-
-  // FirebaseAnalytics.instance.logLogin();
-
-  /// Initialize firebase analytics *
+  // 1. Initialize bindings FIRST
   WidgetsFlutterBinding.ensureInitialized();
+
+  // 2. Load environment variables
+  try {
+    await dotenv.load(fileName: ".env");
+  } catch (e) {
+    print("Failed to load .env file: $e");
+    // Fallback or error handling if needed
+  }
+
+  // 3. Initialize Firebase
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // 4. Run the app
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {

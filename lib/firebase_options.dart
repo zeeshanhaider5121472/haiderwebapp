@@ -43,7 +43,7 @@ class DefaultFirebaseOptions {
 
   static FirebaseOptions web = FirebaseOptions(
     // apiKey: '*fw',
-    apiKey: dotenv.env['API_KEY1']!,
+    apiKey: dotenv.env['API_KEY1'] ?? "missing_api_key_1",
     appId: '1:491790797855:web:d6d4e79f508d97a51cd92a',
     messagingSenderId: '491790797855',
     projectId: 'haiderwebanalytics',
@@ -54,7 +54,7 @@ class DefaultFirebaseOptions {
 
   static FirebaseOptions android = FirebaseOptions(
     // apiKey: '*ro',
-    apiKey: dotenv.env['API_KEY2']!,
+    apiKey: dotenv.env['API_KEY2'] ?? "missing_api_key_2",
     appId: '1:491790797855:android:4135f37b7d39ed6a1cd92a',
     messagingSenderId: '491790797855',
     projectId: 'haiderwebanalytics',
@@ -63,7 +63,7 @@ class DefaultFirebaseOptions {
 
   static FirebaseOptions ios = FirebaseOptions(
     // apiKey: '*lI',
-    apiKey: dotenv.env['API_KEY3']!,
+    apiKey: dotenv.env['API_KEY3'] ?? "missing_api_key_3",
     appId: '1:491790797855:ios:b40f4edf7b8c14251cd92a',
     messagingSenderId: '491790797855',
     projectId: 'haiderwebanalytics',
@@ -73,7 +73,7 @@ class DefaultFirebaseOptions {
 
   static FirebaseOptions macos = FirebaseOptions(
     // apiKey: '*lI',
-    apiKey: dotenv.env['API_KEY3']!,
+    apiKey: dotenv.env['API_KEY3'] ?? "missing_api_key_3",
     appId: '1:491790797855:ios:b40f4edf7b8c14251cd92a',
     messagingSenderId: '491790797855',
     projectId: 'haiderwebanalytics',
@@ -83,7 +83,7 @@ class DefaultFirebaseOptions {
 
   static FirebaseOptions windows = FirebaseOptions(
     // apiKey: '*fw',
-    apiKey: dotenv.env['API_KEY1']!,
+    apiKey: dotenv.env['API_KEY1'] ?? "missing_api_key_1",
     appId: '1:491790797855:web:7aaa00ff4d604d571cd92a',
     messagingSenderId: '491790797855',
     projectId: 'haiderwebanalytics',
