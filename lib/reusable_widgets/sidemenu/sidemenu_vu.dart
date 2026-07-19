@@ -252,7 +252,6 @@ Widget _getEMFdetector({required BuildContext context}) {
 
 class FullScreenPopup extends StatelessWidget {
   const FullScreenPopup({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Dialog(
